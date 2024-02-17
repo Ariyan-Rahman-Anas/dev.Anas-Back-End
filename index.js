@@ -3,7 +3,7 @@ const cors = require("cors");
 const port = process.env.PORT || 5001;
 const app = express();
 require("dotenv").config();
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 
 //middleware
@@ -33,12 +33,19 @@ async function run() {
       .db("Credentials-of-Anas")
       .collection("Credentials");
 
-      //getting all credentials
-      app.get("/credentials", async (req, res) => {
-          const result = await credentialsCollection.find().toArray();
-          res.send(result)
-      })
-      
+    //getting all credentials
+    app.get("/credentials", async (req, res) => {
+      const result = await credentialsCollection.find().toArray();
+      res.send(result);
+    });
+
+    //getting credentials details for credentials details page
+    app.get("/credentials/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await credentialsCollection.findOne(query);
+      res.send(result);
+    });
 
     // storing all of credentials
     app.post("/credentials", async (req, res) => {
